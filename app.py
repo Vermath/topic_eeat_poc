@@ -13,6 +13,16 @@ st.title("EEAT Content Evaluator")
 # Text area for user input
 user_content = st.text_area("Enter your content here:", height=300)
 
+# Slider for temperature setting
+temperature = st.slider(
+    "Select Temperature",
+    min_value=0.0,
+    max_value=1.0,
+    value=0.2,
+    step=0.05,
+    help="Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic.",
+)
+
 if st.button("Evaluate Content"):
     if user_content.strip() == '':
         st.warning("Please enter some content to evaluate.")
@@ -79,8 +89,8 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
 
         try:
             with st.spinner('Evaluating content...'):
-                # Call the OpenAI API
-                response = client.chat.completions.create(
+                # Call the OpenAI API with streaming and temperature settings
+                stream = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
                         {
@@ -88,65 +98,82 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
                             "content": prompt,
                         },
                     ],
+                    temperature=temperature,
+                    stream=True,
                 )
+
+                # Initialize an empty string to accumulate the response
+                assistant_reply = ""
+
+                # Placeholder for displaying the evaluation
+                evaluation_placeholder = st.empty()
+                grade_placeholder = st.empty()
+
+                # Iterate over the streamed chunks
+                for chunk in stream:
+                    if chunk.choices[0].delta.content:
+                        assistant_reply += chunk.choices[0].delta.content
+                        evaluation_placeholder.text(assistant_reply)
+
+                # Once streaming is complete, process the full response
+                # Extract the assistant's reply sections
+                category_assessments = ""
+                recommendations = ""
+                grade_justification = ""
+                overall_grade = ""
+
+                # Extract the <category_assessments> section
+                category_pattern = r'<category_assessments>\s*(.*?)\s*</category_assessments>'
+                category_match = re.search(category_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+                if category_match:
+                    category_assessments = category_match.group(1).strip()
+
+                # Extract the <recommendations> section
+                recommendations_pattern = r'<recommendations>\s*(.*?)\s*</recommendations>'
+                recommendations_match = re.search(recommendations_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+                if recommendations_match:
+                    recommendations = recommendations_match.group(1).strip()
+
+                # Extract the <grade_justification> section
+                grade_justification_pattern = r'<grade_justification>\s*(.*?)\s*</grade_justification>'
+                grade_justification_match = re.search(grade_justification_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+                if grade_justification_match:
+                    grade_justification = grade_justification_match.group(1).strip()
+
+                # Extract the <overall_grade> section with delimiters << >>
+                overall_grade_pattern = r'<overall_grade>\s*<<\s*([^<>]+?)\s*>>\s*</overall_grade>'
+                overall_grade_match = re.search(overall_grade_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+                if overall_grade_match:
+                    overall_grade = overall_grade_match.group(1).strip()
+
+                # Clear the spinner
+                st.spinner().empty()
+
+                # Display the assistant's reply sections and the overall grade
+                col1, col2 = st.columns([3, 1])
+
+                with col1:
+                    st.subheader("Evaluation and Recommendations")
+                    
+                    if category_assessments:
+                        st.markdown("### Category Assessments")
+                        st.write(category_assessments)
+                    
+                    if recommendations:
+                        st.markdown("### Recommendations")
+                        st.write(recommendations)
+                    
+                    if grade_justification:
+                        st.markdown("### Grade Justification")
+                        st.write(grade_justification)
+
+                with col2:
+                    if overall_grade:
+                        st.subheader("EEAT Score")
+                        st.info(overall_grade)
+                    else:
+                        st.subheader("EEAT Score")
+                        st.info("Not found")
+        
         except Exception as e:
             st.error(f"An error occurred: {e}")
-        else:
-            # Extract the assistant's reply
-            assistant_reply = response.choices[0].message.content
-
-            # Initialize variables to store extracted sections
-            category_assessments = ""
-            recommendations = ""
-            grade_justification = ""
-            overall_grade = ""
-
-            # Extract the <category_assessments> section
-            category_pattern = r'<category_assessments>\s*(.*?)\s*</category_assessments>'
-            category_match = re.search(category_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-            if category_match:
-                category_assessments = category_match.group(1).strip()
-
-            # Extract the <recommendations> section
-            recommendations_pattern = r'<recommendations>\s*(.*?)\s*</recommendations>'
-            recommendations_match = re.search(recommendations_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-            if recommendations_match:
-                recommendations = recommendations_match.group(1).strip()
-
-            # Extract the <grade_justification> section
-            grade_justification_pattern = r'<grade_justification>\s*(.*?)\s*</grade_justification>'
-            grade_justification_match = re.search(grade_justification_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-            if grade_justification_match:
-                grade_justification = grade_justification_match.group(1).strip()
-
-            # Extract the <overall_grade> section with delimiters << >>
-            overall_grade_pattern = r'<overall_grade>\s*<<\s*([^<>]+?)\s*>>\s*</overall_grade>'
-            overall_grade_match = re.search(overall_grade_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-            if overall_grade_match:
-                overall_grade = overall_grade_match.group(1).strip()
-
-            # Display the assistant's reply sections and the overall grade
-            col1, col2 = st.columns([3, 1])
-
-            with col1:
-                st.subheader("Evaluation and Recommendations")
-                
-                if category_assessments:
-                    st.markdown("### Category Assessments")
-                    st.write(category_assessments)
-                
-                if recommendations:
-                    st.markdown("### Recommendations")
-                    st.write(recommendations)
-                
-                if grade_justification:
-                    st.markdown("### Grade Justification")
-                    st.write(grade_justification)
-
-            with col2:
-                if overall_grade:
-                    st.subheader("EEAT Score")
-                    st.info(overall_grade)
-                else:
-                    st.subheader("EEAT Score")
-                    st.info("Not found")
