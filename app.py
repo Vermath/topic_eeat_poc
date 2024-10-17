@@ -105,17 +105,18 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
                 # Initialize an empty string to accumulate the response
                 assistant_reply = ""
 
-                # Placeholder for displaying the evaluation
-                evaluation_placeholder = st.empty()
-                grade_placeholder = st.empty()
+                # Placeholder for streaming evaluation (optional)
+                # You can use this to show real-time updates if desired
+                # For simplicity, we'll skip real-time display to ensure correct parsing
 
                 # Iterate over the streamed chunks
                 for chunk in stream:
-                    if chunk.choices[0].delta.content:
-                        assistant_reply += chunk.choices[0].delta.content
-                        evaluation_placeholder.text(assistant_reply)
+                    if 'choices' in chunk and len(chunk.choices) > 0:
+                        delta = chunk.choices[0].delta
+                        if 'content' in delta:
+                            assistant_reply += delta.content
 
-                # Once streaming is complete, process the full response
+                # After streaming completes, parse the full response
                 # Extract the assistant's reply sections
                 category_assessments = ""
                 recommendations = ""
@@ -146,34 +147,31 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
                 if overall_grade_match:
                     overall_grade = overall_grade_match.group(1).strip()
 
-                # Clear the spinner
-                st.spinner().empty()
+            # Display the assistant's reply sections and the overall grade
+            col1, col2 = st.columns([3, 1])
 
-                # Display the assistant's reply sections and the overall grade
-                col1, col2 = st.columns([3, 1])
+            with col1:
+                st.subheader("Evaluation and Recommendations")
+                
+                if category_assessments:
+                    st.markdown("### Category Assessments")
+                    st.write(category_assessments)
+                
+                if recommendations:
+                    st.markdown("### Recommendations")
+                    st.write(recommendations)
+                
+                if grade_justification:
+                    st.markdown("### Grade Justification")
+                    st.write(grade_justification)
 
-                with col1:
-                    st.subheader("Evaluation and Recommendations")
-                    
-                    if category_assessments:
-                        st.markdown("### Category Assessments")
-                        st.write(category_assessments)
-                    
-                    if recommendations:
-                        st.markdown("### Recommendations")
-                        st.write(recommendations)
-                    
-                    if grade_justification:
-                        st.markdown("### Grade Justification")
-                        st.write(grade_justification)
+            with col2:
+                if overall_grade:
+                    st.subheader("EEAT Score")
+                    st.info(overall_grade)
+                else:
+                    st.subheader("EEAT Score")
+                    st.info("Not found")
 
-                with col2:
-                    if overall_grade:
-                        st.subheader("EEAT Score")
-                        st.info(overall_grade)
-                    else:
-                        st.subheader("EEAT Score")
-                        st.info("Not found")
-        
         except Exception as e:
             st.error(f"An error occurred: {e}")
