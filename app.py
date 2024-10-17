@@ -4,7 +4,7 @@ import re
 from openai import OpenAI
 
 # Set your OpenAI API key
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets["OPENAI_API_KEY"]
 
 # Initialize the OpenAI client
 client = OpenAI(api_key=api_key)
