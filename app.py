@@ -31,19 +31,19 @@ if st.button("Evaluate Content"):
         prompt = f"""---
         
 **You are tasked with evaluating content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Your goal is to provide a comprehensive assessment and offer specific recommendations for improvement.**
-
+        
 Here is the content to evaluate:
-
+        
 <content_to_evaluate>
 {user_content}
 </content_to_evaluate>
-
+        
 Please follow these steps to complete the evaluation:
-
+        
 1. Carefully read through the content provided above.
-
+        
 2. Evaluate the content based on each category of the EEAT guidelines:
-
+    
    a) Content and Quality  
    b) Expertise  
    c) Focus on People-First Content  
@@ -51,39 +51,39 @@ Please follow these steps to complete the evaluation:
    e) Promote User Interaction  
    f) "Who, How, and Why" of Content Creation  
    g) E-E-A-T and Quality Rater Guidelines
-
+        
    For each category, consider the specific questions and criteria outlined in the guidelines.
-
+        
 3. As you evaluate each category, make notes on strengths and areas for improvement. Be specific and provide examples from the content where possible.
-
-4. Based on your evaluation, develop specific recommendations for improving the content according to the EEAT guidelines. These recommendations should be actionable and directly address any weaknesses you identified.
-
+        
+4. Based on your evaluation, develop specific recommendations for improving the content according to the EEAT guidelines. These recommendations should be actionable and directly address any weaknesses you identified. **In your recommendations, reference specific portions of the content that need improvement by quoting or indicating the relevant sections.**
+        
 5. Determine an overall grade for the content's adherence to EEAT guidelines, ranging from F to A++. Consider the content's performance across all categories when assigning this grade.
-
+        
 6. Provide a justification for the grade you've assigned, summarizing the key strengths and weaknesses of the content in relation to the EEAT guidelines.
-
+        
 7. Format your response as follows:
-
+        
 <evaluation>
 <category_assessments>
 [Provide your assessment for each category of the EEAT guidelines here. Include specific examples and observations from the content.]
 </category_assessments>
-
+        
 <recommendations>
-[List your specific recommendations for improving the content here. Each recommendation should be clear, actionable, and directly tied to the EEAT guidelines.]
+[List your specific recommendations for improving the content here. Each recommendation should be clear, actionable, and directly tied to the EEAT guidelines. Reference specific portions of the content that need improvement.]
 </recommendations>
-
+        
 <grade_justification>
 [Provide your justification for the overall grade here, summarizing the key strengths and weaknesses of the content in relation to the EEAT guidelines.]
 </grade_justification>
-
+        
 <overall_grade>
 [Insert the overall grade here, surrounded by double angle brackets. For example: <<B+>>]
 </overall_grade>
 </evaluation>
-
+        
 Remember, do not consider Author Credentials, Imagery, or other forms of Visual Engagement in your evaluation. When evaluating Promote User Interaction, do not penalize the absence of a comment section as the content may not be published yet.
-
+        
 Provide your evaluation based solely on the content provided and the EEAT guidelines. Be thorough, objective, and constructive in your assessment.
 """
 
