@@ -17,15 +17,15 @@ if st.button("Evaluate Content"):
     if user_content.strip() == '':
         st.warning("Please enter some content to evaluate.")
     else:
-        # Construct the enhanced prompt with detailed EEAT guidelines, excluding specific aspects
+        # Construct the enhanced prompt with detailed EEAT guidelines
         prompt = f"""---
         
-You are tasked with evaluating content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Your goal is to provide a comprehensive assessment and offer specific recommendations for improvement.
+**You are tasked with evaluating content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Your goal is to provide a comprehensive assessment and offer specific recommendations for improvement.**
 
 Here is the content to evaluate:
 
 <content_to_evaluate>
-{{CONTENT}}
+{user_content}
 </content_to_evaluate>
 
 Please follow these steps to complete the evaluation:
@@ -34,12 +34,12 @@ Please follow these steps to complete the evaluation:
 
 2. Evaluate the content based on each category of the EEAT guidelines:
 
-   a) Content and Quality
-   b) Expertise
-   c) Focus on People-First Content
-   d) Avoid Creating Search Engine-First Content
-   e) Promote User Interaction
-   f) "Who, How, and Why" of Content Creation
+   a) Content and Quality  
+   b) Expertise  
+   c) Focus on People-First Content  
+   d) Avoid Creating Search Engine-First Content  
+   e) Promote User Interaction  
+   f) "Who, How, and Why" of Content Creation  
    g) E-E-A-T and Quality Rater Guidelines
 
    For each category, consider the specific questions and criteria outlined in the guidelines.
@@ -75,12 +75,6 @@ Please follow these steps to complete the evaluation:
 Remember, do not consider Author Credentials, Imagery, or other forms of Visual Engagement in your evaluation. When evaluating Promote User Interaction, do not penalize the absence of a comment section as the content may not be published yet.
 
 Provide your evaluation based solely on the content provided and the EEAT guidelines. Be thorough, objective, and constructive in your assessment.
-
-{user_content}
-
----
-
-Please ensure your evaluation is thorough and references specific aspects of the guidelines. Remember to provide the overall grade surrounded by delimiters like '<<score: A>>'.
 """
 
         try:
@@ -101,25 +95,58 @@ Please ensure your evaluation is thorough and references specific aspects of the
             # Extract the assistant's reply
             assistant_reply = response.choices[0].message.content
 
-            # Extract the score using a regular expression
-            score_pattern = r'<<score:\s*(.*?)>>'
-            score_match = re.search(score_pattern, assistant_reply, re.IGNORECASE)
+            # Initialize variables to store extracted sections
+            category_assessments = ""
+            recommendations = ""
+            grade_justification = ""
+            overall_grade = ""
 
-            if score_match:
-                score = score_match.group(1).strip()
-                # Remove the score from the assistant's reply
-                assistant_reply_without_score = re.sub(score_pattern, '', assistant_reply, flags=re.IGNORECASE).strip()
-            else:
-                score = 'Not found'
-                assistant_reply_without_score = assistant_reply
+            # Extract the <category_assessments> section
+            category_pattern = r'<category_assessments>\s*(.*?)\s*</category_assessments>'
+            category_match = re.search(category_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if category_match:
+                category_assessments = category_match.group(1).strip()
 
-            # Display the assistant's reply and the score
+            # Extract the <recommendations> section
+            recommendations_pattern = r'<recommendations>\s*(.*?)\s*</recommendations>'
+            recommendations_match = re.search(recommendations_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if recommendations_match:
+                recommendations = recommendations_match.group(1).strip()
+
+            # Extract the <grade_justification> section
+            grade_justification_pattern = r'<grade_justification>\s*(.*?)\s*</grade_justification>'
+            grade_justification_match = re.search(grade_justification_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if grade_justification_match:
+                grade_justification = grade_justification_match.group(1).strip()
+
+            # Extract the <overall_grade> section with delimiters << >>
+            overall_grade_pattern = r'<overall_grade>\s*<<\s*([^<>]+?)\s*>>\s*</overall_grade>'
+            overall_grade_match = re.search(overall_grade_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if overall_grade_match:
+                overall_grade = overall_grade_match.group(1).strip()
+
+            # Display the assistant's reply sections and the overall grade
             col1, col2 = st.columns([3, 1])
 
             with col1:
                 st.subheader("Evaluation and Recommendations")
-                st.write(assistant_reply_without_score)
+                
+                if category_assessments:
+                    st.markdown("### Category Assessments")
+                    st.write(category_assessments)
+                
+                if recommendations:
+                    st.markdown("### Recommendations")
+                    st.write(recommendations)
+                
+                if grade_justification:
+                    st.markdown("### Grade Justification")
+                    st.write(grade_justification)
 
             with col2:
-                st.subheader("EEAT Score")
-                st.info(score)
+                if overall_grade:
+                    st.subheader("EEAT Score")
+                    st.info(overall_grade)
+                else:
+                    st.subheader("EEAT Score")
+                    st.info("Not found")
