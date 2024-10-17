@@ -17,10 +17,10 @@ if st.button("Evaluate Content"):
     if user_content.strip() == '':
         st.warning("Please enter some content to evaluate.")
     else:
-        # Construct the enhanced prompt with detailed EEAT guidelines
+        # Construct the enhanced prompt with detailed EEAT guidelines, excluding specific aspects
         prompt = f"""---
         
-**Please evaluate the following content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Use the detailed guidelines provided below to assess the content. Provide an overall grade from F to A++ for how well it adheres to the guidelines, and surround the score in delimiters like '<<score: A>>' for easy extraction. Then, provide specific recommendations on how to improve the content according to the EEAT guidelines.**
+**Please evaluate the following content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Do not consider Author Credentials or Visual Engagement in your evaluation. While evaluating Promote User Interaction, do not penalize the absence of a comment section as the content may not be published yet. Use the detailed guidelines provided below to assess the content. Provide an overall grade from F to A++ for how well it adheres to the guidelines, and surround the score in delimiters like '<<score: A>>' for easy extraction. Then, provide specific recommendations on how to improve the content according to the EEAT guidelines.**
 
 ---
 
@@ -105,6 +105,15 @@ if st.button("Evaluate Content"):
 - **Expertise and Authenticity:**
   - Did you enter a niche topic without any real expertise, mainly to get search traffic?
   - Does your content promise answers to questions that have no answer?
+
+#### **Promote User Interaction:**
+
+- **Engagement Encouragement:**
+  - Does the content encourage readers to share their experiences or variations related to the topic?
+  - Is there an invitation for readers to engage with the content in meaningful ways, such as sharing feedback or participating in discussions?
+
+- **Community Building:**
+  - Does the content foster a sense of community among its readers by encouraging interaction and participation?
 
 #### **"Who, How, and Why" of Content Creation:**
 
