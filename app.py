@@ -20,125 +20,61 @@ if st.button("Evaluate Content"):
         # Construct the enhanced prompt with detailed EEAT guidelines, excluding specific aspects
         prompt = f"""---
         
-**Please evaluate the following content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Do not consider Author Credentials or Visual Engagement in your evaluation. While evaluating Promote User Interaction, do not penalize the absence of a comment section as the content may not be published yet. Use the detailed guidelines provided below to assess the content. Provide an overall grade from F to A++ for how well it adheres to the guidelines, and surround the score in delimiters like '<<score: A>>' for easy extraction. Then, provide specific recommendations on how to improve the content according to the EEAT guidelines.**
+You are tasked with evaluating content for adherence to Google's EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines. Your goal is to provide a comprehensive assessment and offer specific recommendations for improvement.
 
----
+Here is the content to evaluate:
 
-### **EEAT Guidelines:**
+<content_to_evaluate>
+{{CONTENT}}
+</content_to_evaluate>
 
-#### **Content and Quality Questions:**
+Please follow these steps to complete the evaluation:
 
-- **Originality and Value:**
-  - Does the content provide original information, reporting, research, or analysis?
-  - Does it offer substantial, complete, or comprehensive coverage of the topic?
-  - Does it provide insightful analysis or interesting information beyond the obvious?
-  - If drawing on other sources, does it add substantial additional value and originality rather than simply copying or rewriting?
+1. Carefully read through the content provided above.
 
-- **Headings and Titles:**
-  - Does the main heading or page title provide a descriptive, helpful summary of the content?
-  - Does it avoid exaggeration or shock value?
+2. Evaluate the content based on each category of the EEAT guidelines:
 
-- **User Engagement:**
-  - Is this the sort of page you'd want to bookmark, share with a friend, or recommend?
-  - Would you expect to see this content in or referenced by a printed magazine, encyclopedia, or book?
+   a) Content and Quality
+   b) Expertise
+   c) Focus on People-First Content
+   d) Avoid Creating Search Engine-First Content
+   e) Promote User Interaction
+   f) "Who, How, and Why" of Content Creation
+   g) E-E-A-T and Quality Rater Guidelines
 
-- **Comparative Value:**
-  - Does the content provide substantial value compared to other pages in search results?
+   For each category, consider the specific questions and criteria outlined in the guidelines.
 
-- **Quality and Presentation:**
-  - Does the content have spelling or stylistic issues?
-  - Is it well-produced, or does it appear sloppy or hastily created?
-  - Is the content mass-produced or outsourced to many creators without adequate attention or care?
+3. As you evaluate each category, make notes on strengths and areas for improvement. Be specific and provide examples from the content where possible.
 
-#### **Expertise Questions:**
+4. Based on your evaluation, develop specific recommendations for improving the content according to the EEAT guidelines. These recommendations should be actionable and directly address any weaknesses you identified.
 
-- **Trustworthiness and Authority:**
-  - Does the content present information in a way that makes you want to trust it?
-    - Clear sourcing?
-    - Evidence of expertise?
-    - Background about the author or the site (e.g., links to an author page or About page)?
+5. Determine an overall grade for the content's adherence to EEAT guidelines, ranging from F to A++. Consider the content's performance across all categories when assigning this grade.
 
-- **Reputation:**
-  - If someone researched the site or author, would they find it well-trusted or widely recognized as an authority on the topic?
+6. Provide a justification for the grade you've assigned, summarizing the key strengths and weaknesses of the content in relation to the EEAT guidelines.
 
-- **Expert Contribution:**
-  - Is the content written or reviewed by an expert or enthusiast who knows the topic well?
+7. Format your response as follows:
 
-- **Accuracy:**
-  - Does the content have any easily verified factual errors?
+<evaluation>
+<category_assessments>
+[Provide your assessment for each category of the EEAT guidelines here. Include specific examples and observations from the content.]
+</category_assessments>
 
-#### **Focus on People-First Content:**
+<recommendations>
+[List your specific recommendations for improving the content here. Each recommendation should be clear, actionable, and directly tied to the EEAT guidelines.]
+</recommendations>
 
-- **Audience Awareness:**
-  - Do you have an existing or intended audience that would find the content useful if they came directly to you?
+<grade_justification>
+[Provide your justification for the overall grade here, summarizing the key strengths and weaknesses of the content in relation to the EEAT guidelines.]
+</grade_justification>
 
-- **Demonstrated Expertise:**
-  - Does the content clearly demonstrate first-hand expertise and depth of knowledge (e.g., expertise from actually using a product or service, or visiting a place)?
+<overall_grade>
+[Insert the overall grade here, surrounded by double angle brackets. For example: <<B+>>]
+</overall_grade>
+</evaluation>
 
-- **Purpose and Focus:**
-  - Does your site have a primary purpose or focus?
+Remember, do not consider Author Credentials, Imagery, or other forms of Visual Engagement in your evaluation. When evaluating Promote User Interaction, do not penalize the absence of a comment section as the content may not be published yet.
 
-- **User Satisfaction:**
-  - After reading, will someone feel they've learned enough to achieve their goal?
-  - Will they feel satisfied with their experience?
-
-#### **Avoid Creating Search Engine-First Content:**
-
-- **Motivation:**
-  - Is the content primarily made to attract search engine visits?
-  - Are you producing lots of content on various topics hoping some might perform well in search results?
-
-- **Automation and Value:**
-  - Are you using extensive automation to produce content on many topics?
-  - Are you mainly summarizing others without adding much value?
-
-- **Trends and Relevance:**
-  - Are you writing about things simply because they are trending, not because they align with your audience?
-
-- **Reader Experience:**
-  - Does your content leave readers feeling they need to search again for better information?
-
-- **Word Count and Freshness:**
-  - Are you writing to a particular word count because you've heard Google prefers it? (Note: Google does not.)
-  - Are you changing dates or adding/removing content primarily to make the site seem "fresh"?
-
-- **Expertise and Authenticity:**
-  - Did you enter a niche topic without any real expertise, mainly to get search traffic?
-  - Does your content promise answers to questions that have no answer?
-
-#### **Promote User Interaction:**
-
-- **Engagement Encouragement:**
-  - Does the content encourage readers to share their experiences or variations related to the topic?
-  - Is there an invitation for readers to engage with the content in meaningful ways, such as sharing feedback or participating in discussions?
-
-- **Community Building:**
-  - Does the content foster a sense of community among its readers by encouraging interaction and participation?
-
-#### **"Who, How, and Why" of Content Creation:**
-
-- **Who (Created the Content):**
-  - Is it clear who authored the content?
-  - Do pages have bylines where appropriate?
-  - Do bylines link to information about the author, their background, and expertise?
-
-- **How (Content Was Created):**
-  - Is it evident if automation or AI was used in content creation?
-  - Are you transparent about how and why automation or AI was utilized?
-
-- **Why (Content Was Created):**
-  - Is the primary purpose to help people and provide value?
-  - Or is it mainly to attract search engine visits?
-
-#### **E-E-A-T and Quality Rater Guidelines:**
-
-- **Experience, Expertise, Authoritativeness, Trustworthiness:**
-  - Does the content demonstrate these qualities?
-  - Is the content helpful, reliable, and created for people first?
-
----
-
-### **Content to Evaluate:**
+Provide your evaluation based solely on the content provided and the EEAT guidelines. Be thorough, objective, and constructive in your assessment.
 
 {user_content}
 
