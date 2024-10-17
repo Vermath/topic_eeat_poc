@@ -89,8 +89,8 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
 
         try:
             with st.spinner('Evaluating content...'):
-                # Call the OpenAI API with streaming and temperature settings
-                stream = client.chat.completions.create(
+                # Call the OpenAI API without streaming and with the specified temperature
+                response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
                         {
@@ -99,53 +99,42 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
                         },
                     ],
                     temperature=temperature,
-                    stream=True,
                 )
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+        else:
+            # Extract the assistant's reply
+            assistant_reply = response.choices[0].message.content
 
-                # Initialize an empty string to accumulate the response
-                assistant_reply = ""
+            # Initialize variables to store extracted sections
+            category_assessments = ""
+            recommendations = ""
+            grade_justification = ""
+            overall_grade = ""
 
-                # Placeholder for streaming evaluation (optional)
-                # You can use this to show real-time updates if desired
-                # For simplicity, we'll skip real-time display to ensure correct parsing
+            # Extract the <category_assessments> section
+            category_pattern = r'<category_assessments>\s*(.*?)\s*</category_assessments>'
+            category_match = re.search(category_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if category_match:
+                category_assessments = category_match.group(1).strip()
 
-                # Iterate over the streamed chunks
-                for chunk in stream:
-                    if 'choices' in chunk and len(chunk.choices) > 0:
-                        delta = chunk.choices[0].delta
-                        if 'content' in delta:
-                            assistant_reply += delta.content
+            # Extract the <recommendations> section
+            recommendations_pattern = r'<recommendations>\s*(.*?)\s*</recommendations>'
+            recommendations_match = re.search(recommendations_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if recommendations_match:
+                recommendations = recommendations_match.group(1).strip()
 
-                # After streaming completes, parse the full response
-                # Extract the assistant's reply sections
-                category_assessments = ""
-                recommendations = ""
-                grade_justification = ""
-                overall_grade = ""
+            # Extract the <grade_justification> section
+            grade_justification_pattern = r'<grade_justification>\s*(.*?)\s*</grade_justification>'
+            grade_justification_match = re.search(grade_justification_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if grade_justification_match:
+                grade_justification = grade_justification_match.group(1).strip()
 
-                # Extract the <category_assessments> section
-                category_pattern = r'<category_assessments>\s*(.*?)\s*</category_assessments>'
-                category_match = re.search(category_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-                if category_match:
-                    category_assessments = category_match.group(1).strip()
-
-                # Extract the <recommendations> section
-                recommendations_pattern = r'<recommendations>\s*(.*?)\s*</recommendations>'
-                recommendations_match = re.search(recommendations_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-                if recommendations_match:
-                    recommendations = recommendations_match.group(1).strip()
-
-                # Extract the <grade_justification> section
-                grade_justification_pattern = r'<grade_justification>\s*(.*?)\s*</grade_justification>'
-                grade_justification_match = re.search(grade_justification_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-                if grade_justification_match:
-                    grade_justification = grade_justification_match.group(1).strip()
-
-                # Extract the <overall_grade> section with delimiters << >>
-                overall_grade_pattern = r'<overall_grade>\s*<<\s*([^<>]+?)\s*>>\s*</overall_grade>'
-                overall_grade_match = re.search(overall_grade_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
-                if overall_grade_match:
-                    overall_grade = overall_grade_match.group(1).strip()
+            # Extract the <overall_grade> section with delimiters << >>
+            overall_grade_pattern = r'<overall_grade>\s*<<\s*([^<>]+?)\s*>>\s*</overall_grade>'
+            overall_grade_match = re.search(overall_grade_pattern, assistant_reply, re.DOTALL | re.IGNORECASE)
+            if overall_grade_match:
+                overall_grade = overall_grade_match.group(1).strip()
 
             # Display the assistant's reply sections and the overall grade
             col1, col2 = st.columns([3, 1])
@@ -172,6 +161,3 @@ Provide your evaluation based solely on the content provided and the EEAT guidel
                 else:
                     st.subheader("EEAT Score")
                     st.info("Not found")
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
